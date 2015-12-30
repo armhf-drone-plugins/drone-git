@@ -1,0 +1,40 @@
+clone:
+  path: github.com/drone-plugins
+  recursive: true
+
+build:
+  image: armhfbuild/golang:1.5
+  environment:
+    - GO15VENDOREXPERIMENT=1
+    - GOOS=linux
+    - GOARCH=arm
+    - CGO_ENABLED=0
+  commands:
+    - cd drone-git
+    - sed -i 's/FROM / FROM armhfbuild\//' Dockerfile
+    - go get
+    - go build
+    - go test
+
+publish:
+  docker:
+    context: drone-git
+    file: drone-git/Dockerfile
+    username: $$DOCKER_USER
+    email: $$DOCKER_EMAIL
+    password: $$DOCKER_PASSWORD
+    repo: armhfplugins/drone-git
+    storage_driver: overlay
+    when:
+      repo: armhf-drone-plugins/drone-git
+      branch: master
+
+plugin:
+  name: Git
+  desc: Clones a git repository.
+  type: clone
+  image: armhfplugins/drone-git
+  labels:
+    - scm
+    - vcs
+    - git

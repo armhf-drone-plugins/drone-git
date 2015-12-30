@@ -1,0 +1,3 @@
+[submodule "drone-git"]
+	path = drone-git
+	url = https://github.com/drone-plugins/drone-git
